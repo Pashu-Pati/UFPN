@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #Logging
 set -e
 LOG_F="/tmp/sftp-server-setup_"`date "+%F-%T"`".log"
@@ -15,14 +15,16 @@ echo "Logging setup to ${LOG_F}"
 # # user sudo
 # #chmod 0440 /etc/sudoers.d/$1
 # #chown -R $1:$1 /home/$1/.ssh/
-
+python --version
 apt-get update -y
-#apt-get install epel-release -y
+apt-get install epel-release -y
 apt-get install vsftpd -y
 apt-get install ftp -y
-#apt-get install bind-utils -y
-#apt-get install net-tools -y
-#apt-get install network-scripts -y
+apt-get install sshpass -y
+apt-get install systemd -y
+apt-get install bind-utils -y
+apt-get install net-tools -y
+apt-get install network-scripts -y
 
 systemctl start firewalld
 systemctl enable firewalld
@@ -77,7 +79,8 @@ chmod 550 /home/$2/ftp
 chmod 750 /home/$2/ftp/upload
 chown -R $2: /home/$2/ftp
 
-# echo "=============ftp==============="
+echo "=============ftp==============="
+sshpass -p "*,<R#!$(2udw{Zgz" sftp testuser@207.244.229.74:/opt/testuser/logfile.log
 
 # #chmod +x ftp.sh
 # #HOST="192.168.0.103"
