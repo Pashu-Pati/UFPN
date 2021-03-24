@@ -1,48 +1,64 @@
 version: "2.3"
 services:
    sftp:
-     build: /UFPN/ftp
+     build: /home/hw12/ftp
      container_name: sftp
-#     command: bash "sftp.sh"
      ports:
          - "223:22"
      volumes: 
-       - /UFPN/ftp:/opt/data
-       - /UFPN/ftp:/opt/app
+       - /home/hw12/ftp:/opt/data
+       - /home/hw12/ftp:/opt/app
      networks:
-       - devops_network     
+       - devops_network
+     healthcheck:
+       test: ["CMD", "sftp", "testuser@207.244.229.74:/opt/testuser/logfile.log"]
+       interval: 3s
+       timeout: 5s
+       retries: 5
+       start_period: 1s
 
    python:
-     build: /UFPN/python 
+     build: /home/hw12/python 
      container_name: python
-     command: python "sql_orm.py logfile.log"
      volumes: 
-       - /UFPN/ftp:/opt/data
-       - /UFPN/ftp:/opt/app
+       - /home/hw12/ftp:/opt/data
+       - /home/hw12/ftp:/opt/app
+     depends_on:
+       redis:
+         condition: service_healthy
+     environment:
+       - ENV=development
      healthcheck:
-       test: ["CMD", "python", "--version"]
+       test: ["CMD", "python", "sql_orm.py"]
        interval: 3s
        timeout: 5s
        retries: 5
        start_period: 1s
 
    nginx:
-     build: /UFPN/nginx
+     build: /home/hw12/nginx
      ports:
        - "80:883"
      volumes:
-       - /UFPN/ftp:/opt/data
+       - /home/hw12/ftp:/opt/app
      depends_on:
        redis:
          condition: service_healthy
      environment:
        - ENV=development
+     healthcheck:
+       test: ["CMD", "ls", "-lsa"]
+       interval: 3s
+       timeout: 5s
+       retries: 5
+       start_period: 1s
+
    redis:
      image: redis
      volumes:
-       - /UFPN/ftp:/opt/data
+       - /home/hw12/nginx:/opt/data
      healthcheck:
-       test: ["CMD", "redis-cli", "-v"]
+       test: ["CMD", "pwd"]
        interval: 3s
        timeout: 5s
        retries: 5
@@ -51,62 +67,3 @@ services:
 networks:
   devops_network:
     driver: bridge
-
-
-# # version: "2.3"
-# # services:
-# #    nginx:
-# #      build: /home/ls11
-# #      ports:
-# #        - "80:80"
-# #      volumes:
-# #        - /home/ls11:/data
-# #      depends_on:
-# #        redis:
-# #          condition: service_healthy
-# #      environment:
-# #        - ENV=development
-# #    redis:
-# #      image: redis
-# #      volumes:
-# #        - /home/ls10:/data
-# #      healthcheck:
-# #        test: ["CMD", "redis-cli", "-v"]
-# #        interval: 3s
-# #        timeout: 5s
-# #        retries: 5
-# #        start_period: 1s
-
-# # # version: '3'
-# # # services:
-# # #   db:
-# # #     image: postgres:11.4-alpine
-# # #     container_name: postgres
-# # #     ports:
-# # #       - 5432:5432
-# # #     volumes: 
-# # #       - ./pg_data:/var/lib/postgresql/data/pg_data
-# # #     environment: 
-# # #       POSTGRES_PASSWORD: 123
-# # #       POSTGRES_DB: docker_test
-# # #       PGDATA: /var/lib/postgresql/data/pgdata
-# # #     restart: always
-# # #   app:
-# # #     image: drucoder/web-server
-# # #     container_name: application
-# # #     ports: 
-# # #       - 3000:3000
-# # #     environment:
-# # #       POSTGRES_HOST: db
-# # #     restart: always
-# # #     links: 
-# # #       - db
-# # #   nginx:
-# # #     image: nginx:1.17.2-alpine
-# # #     container_name: nginx
-# # #     volumes: 
-# # #       - ./dafault.conf:/etc/nginx/conf.d/default.conf
-# # #     links:
-# # #       - app
-# # #     ports: 
-# # #       - 8989:8989
