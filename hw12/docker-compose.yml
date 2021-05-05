@@ -1,0 +1,53 @@
+version: "2.3"
+services:
+   nginx:
+     build: ./nginx
+     container_name: nginx
+     ports:
+       - "883:80"
+     volumes:
+       - ./nginx:/opt/app
+     healthcheck:
+       test: ["CMD-SHELL", "nginx", "-g", "deamon off;"]
+       interval: 3s
+       timeout: 5s
+       retries: 5
+       start_period: 1s
+
+   sftp:
+     build: ./ftp
+     container_name: sftp
+     ports:
+         - "223:22"
+     volumes: 
+       - ./ftp:/opt/data
+     networks:
+       - devops_network
+     healthcheck:
+       test: ["CMD-SHELL", "test", "-f", "/data/logfile.log"]
+       interval: 3s
+       timeout: 5s
+       retries: 10
+       start_period: 1s
+
+   python:
+     build: ./python 
+     container_name: python
+     ports:
+       - "5050:5050"
+     volumes: 
+       - ./python:/opt/app
+       - ./python:/opt/data       
+     networks:
+       - devops_network
+     healthcheck:
+       test: ["CMD-SHELL", "test", "-f", "/data/access.db"]
+       interval: 3s
+       timeout: 5s
+       retries: 10
+       start_period: 1s
+
+
+networks:
+  devops_network:
+    driver: bridge
