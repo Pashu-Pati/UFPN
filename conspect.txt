@@ -1,0 +1,8 @@
+DevOps Lifeicircle plan code build test <-> release deploy operate monitor
+Continuous Development 
+Continuous Integration (our code merge main branch -> built -> test ->  )
+Continuous Testing (merge branch, test)
+Continuous Monitoring
+Virtualization & Containerization
+These stages are the building blocks to archive DevOps as awhole
+Ansible 
