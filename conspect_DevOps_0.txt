@@ -1,0 +1,23 @@
+DevOps Lifeicircle plan code build test <-> release deploy operate monitor
+Continuous Development 
+Continuous Integration (our code merge main branch -> built -> test ->  )
+Continuous Testing (merge branch, test)
+Continuous Monitoring
+Virtualization & Containerization
+These stages are the building blocks to archive DevOps as a whole
+
+DevOps & Unix Try to BASh something
+adduser <username>
+passwd <username>
+usermod -aG wheel
+cat /etc/passwd
+visudo
+root ALL
+ssh config
+sudo chmode
+container emulation + runtime with libraries
+Ansible 
+make app as service - sprin
+micro service each service have own domain
+architecture split & loadBalancer
+Lviv
